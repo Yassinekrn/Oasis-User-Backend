@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+    title: Scholarship API
+    description: API documentation for the scholarship project
+    version: 1.0.0
+servers:
+    - url: http://localhost:3000
+      description: Development server
+
+components:
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+    schemas:
+        Scholarship:
+            type: object
+            properties:
+                _id:
+                    type: string
+                    description: Unique identifier for the scholarship
+                title:
+                    type: string
+                    description: Title of the scholarship
+                description:
+                    type: string
+                    description: Detailed description of the scholarship
+                eligibility:
+                    type: string
+                    description: Eligibility criteria for the scholarship
+                deadline:
+                    type: string
+                    format: date
+                    description: Application deadline
+                location:
+                    type: string
+                    description: Location for the scholarship
+                provider:
+                    type: string
+                    description: Organization or provider of the scholarship
+                startDate:
+                    type: string
+                    format: date
+                    description: Start date of the scholarship
+                imageUrl:
+                    type: string
+                    description: URL of the scholarship image
+                status:
+                    type: string
+                    description: Current status of the scholarship
+                    enum:
+                        - pending
+                        - approved
+                        - rejected
+
+paths:
+    /scholarships:
+        get:
+            summary: Get a list of all scholarships
+            description: Retrieve a list of all available scholarships
+            responses:
+                200:
+                    description: A list of scholarships
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Scholarship"
+    /scholarships/locations:
+        get:
+            summary: Get a list of all distinct scholarship locations
+            description: Retrieve distinct scholarship locations
+            responses:
+                200:
+                    description: A list of locations
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                                    example: "USA"
+    /scholarships/location/{location}:
+        get:
+            summary: Get scholarships by location
+            description: Retrieve a list of scholarships based on the location
+            parameters:
+                - name: location
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  description: The location to search for scholarships
+            responses:
+                200:
+                    description: A list of scholarships filtered by location
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Scholarship"
+    /scholarships/{name}:
+        get:
+            summary: Get a scholarship by name
+            description: Retrieve a specific scholarship based on its name
+            parameters:
+                - name: name
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  description: The name of the scholarship
+            responses:
+                200:
+                    description: A scholarship object
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Scholarship"
