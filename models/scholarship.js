@@ -6,7 +6,7 @@ const scholarshipSchema = new Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
     eligibility: { type: String, required: true },
-    deadline: { type: Date, required: true },
+    deadline: { type: String, required: true },
     location: { type: String, required: true },
     provider: { type: String, required: true },
     startDate: { type: Date, required: true },

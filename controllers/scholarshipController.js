@@ -11,7 +11,8 @@ exports.scholarship_list = asyncHandler(async (req, res) => {
 });
 
 exports.scholarship_by_name = asyncHandler(async (req, res) => {
-    const searchQuery = req.params.name;
+    // const searchQuery = req.params.name;
+    const searchQuery = req.query.name;
 
     // Use regular expression for partial matching (case-insensitive)
     const scholarships = await Scholarship.find({
@@ -53,4 +54,39 @@ exports.scholarships_locations = asyncHandler(async (req, res) => {
 
     // Sort the locations alphabetically
     res.json(locations.sort());
+});
+
+exports.scholarship_detail = asyncHandler(async (req, res) => {
+    const scholarship = await Scholarship.findById(req.params.id);
+
+    if (!scholarship) {
+        return res.status(404).json({ message: "Scholarship not found" });
+    }
+
+    res.json(scholarship);
+});
+
+exports.scholarship_by_deadline = asyncHandler(async (req, res) => {
+    const searchDeadline = req.params.deadline;
+
+    // Check if the format is YYYY-MM-DD
+    const regex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!regex.test(searchDeadline)) {
+        return res
+            .status(400)
+            .json({ message: "Invalid date format. Use YYYY-MM-DD." });
+    }
+
+    // Query scholarships directly by string comparison
+    const scholarships = await Scholarship.find({
+        deadline: searchDeadline,
+    });
+
+    if (!scholarships || scholarships.length === 0) {
+        return res.status(404).json({
+            message: "No scholarships found with the specified deadline",
+        });
+    }
+
+    res.json(scholarships);
 });
