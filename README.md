@@ -34,11 +34,39 @@
     - **Endpoint**: `/scholarships/deadline/:deadline`
     - **Description**: Returns a list of scholarships that have a deadline on or before the specified date. Example: `/scholarships/deadline/2022-12-31`
 
-### RESTful Endpoint Summary
+### **Authentication Endpoints**
 
--   **GET /scholarships**: Retrieve all scholarships.
--   **GET /scholarships/search?name=**: Search for scholarships by name.
--   **GET /scholarships/location/:location**: Search for scholarships by location.
--   **GET /scholarships/locations**: Retrieve distinct list of all scholarship locations.
--   **GET /scholarships/:id**: Retrieve details of a specific scholarship by ID.
--   **GET /scholarships/deadline/:deadline**: Search for scholarships by deadline.
+1. **Sign up a new user**
+
+    - **HTTP Method**: `POST`
+    - **Endpoint**: `/auth/signup`
+    - **Description**: Registers a new user by creating an account and sending a verification email. The request body must include the user’s first name, last name, email, password, and confirm password.
+
+2. **Log in an existing user**
+
+    - **HTTP Method**: `POST`
+    - **Endpoint**: `/auth/login`
+    - **Description**: Logs in an existing user using email and password. Generates and returns an access token and sets a refresh token in a cookie.
+
+3. **Verify email address**
+
+    - **HTTP Method**: `GET`
+    - **Endpoint**: `/auth/verify-email/:id/:token`
+    - **Description**: Verifies a user’s email by matching the user’s ID and the verification token sent via email.
+
+4. **Verify access token**
+
+    - **HTTP Method**: `GET`
+    - **Endpoint**: `/auth/verify-token`
+    - **Description**: Verifies if the current access token is valid or has expired.
+
+5. **Logout a user**
+
+    - **HTTP Method**: `GET`
+    - **Endpoint**: `/auth/logout`
+    - **Description**: Logs out the user and clears the refresh token from the cookie.
+
+6. **Refresh access token**
+    - **HTTP Method**: `GET`
+    - **Endpoint**: `/auth/refresh-token`
+    - **Description**: Generates a new access token using the refresh token stored in the cookie. The old access token should have expired or be near expiration.
