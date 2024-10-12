@@ -19,6 +19,9 @@ let app = express();
 const mongoDb = process.env.MONGODB_URI;
 mongoose.connect(mongoDb, {});
 const db = mongoose.connection;
+db.on("open", () => {
+    console.log("Connected to MongoDB");
+});
 db.on("error", console.error.bind(console, "mongo connection error"));
 
 // cors
@@ -52,13 +55,12 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get("env") === "development" ? err : {};
+    const errorDetails = process.env.NODE_ENV === "development" ? err : {};
 
-    // render the error page
-    res.status(err.status || 500);
-    res.render("error");
+    res.status(err.status || 500).json({
+        message: err.message,
+        error: errorDetails,
+    });
 });
 
 module.exports = app;

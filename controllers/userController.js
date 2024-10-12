@@ -1,12 +1,8 @@
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const sgMail = require("@sendgrid/mail");
 
-const crypto = require("crypto");
-const Token = require("../models/token");
-const { sendingMail } = require("../nodemailer/mailing");
 const { uploadProfileImage } = require("../multer");
 
 const User = require("../models/user");
@@ -16,8 +12,6 @@ require("dotenv").config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const salt = process.env.SALT;
-const access_secret = process.env.ACCESS_JWT_SECRET;
-const refresh_secret = process.env.REFRESH_JWT_SECRET;
 
 const isValidDate = (dateString) => {
     return !isNaN(Date.parse(dateString));
@@ -53,12 +47,11 @@ exports.changePassword_post = [
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
         const user = await User.findById(req.userId);
 
         const isMatch = await bcrypt.compare(
             req.body.oldPassword,
-            user.password
+            user.passwordHash
         );
 
         if (!isMatch) {
@@ -67,13 +60,10 @@ exports.changePassword_post = [
                 .json({ errors: [{ msg: "Invalid password" }] });
         }
 
-        const s = await bcrypt.genSalt(salt);
-        const hashedPassword = await bcrypt.hash(
-            req.body.newPassword,
-            saltRounds
-        );
+        const s = await bcrypt.genSalt(Number(salt));
+        const hashedPassword = await bcrypt.hash(req.body.newPassword, s);
 
-        user.password = hashedPassword;
+        user.passwordHash = hashedPassword;
         await user.save();
 
         res.json({ msg: "Password changed successfully" });
