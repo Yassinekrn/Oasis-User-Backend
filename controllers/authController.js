@@ -179,10 +179,10 @@ exports.signup_post = [
                 userId: user.id,
                 token: emailVerificationToken,
                 expiresAt: Date.now() + 3600000,
+                type: "email-verification",
             });
 
             sendingMail({
-                from: "blasernoob@gmail.com",
                 to: user.email,
                 subject: "Account Verification",
                 text: `Hello ${user.firstName}, please verify your email by clicking this link: http://localhost:${process.env.PORT}/auth/verify-email/${user.id}/${emailVerificationToken}`,
@@ -254,10 +254,10 @@ exports.resendVerificationEmail_post = asyncHandler(async (req, res) => {
             userId: user._id,
             token: newToken,
             expiresAt: tokenExpiration,
+            type: "email-verification",
         });
 
         sendingMail({
-            from: "no-reply@example.com",
             to: user.email,
             subject: "Account Verification",
             text: `Hello ${user.firstName}, please verify your email by clicking this link: http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}`,
@@ -329,3 +329,131 @@ exports.logout_get = [
         return res.status(200).json({ message: "Logged out successfully" });
     }),
 ];
+
+exports.forgotPassword_post = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({
+                message: "No user found with this email. Please sign up.",
+            });
+        }
+
+        const resetToken = crypto.randomBytes(16).toString("hex");
+        const tokenExpiration = Date.now() + 3600000;
+
+        await Token.create({
+            userId: user._id,
+            token: resetToken,
+            expiresAt: tokenExpiration,
+            type: "password-reset",
+        });
+
+        sendingMail({
+            to: user.email,
+            subject: "Password Reset",
+            text: `Hello ${user.firstName}, please reset your password by clicking this link: http://localhost:${process.env.PORT}/auth/reset-password/${user._id}/${resetToken}`,
+        });
+
+        return res.status(200).json({
+            message:
+                "Password reset email has been sent. Please check your inbox.",
+        });
+    } catch (error) {
+        console.error("Error in sending password reset email:", error);
+        return res.status(500).json({
+            message:
+                "An error occurred while sending the password reset email. Please try again.",
+        });
+    }
+});
+
+exports.resetPassword_post = [
+    body(
+        "password",
+        "Password must be 8+ characters long, contain an uppercase letter, lowercase letter, number, and special character"
+    )
+        .trim()
+        .isLength({ min: 8 })
+        .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
+        ),
+    body("confirmPassword", "Confirm password is required")
+        .trim()
+        .isLength({ min: 8 }),
+    body("confirmPassword").custom((value, { req }) => {
+        if (value !== req.body.password) {
+            throw new Error("Passwords do not match.");
+        }
+        return true;
+    }),
+    asyncHandler(async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { token, id } = req.params;
+        const { password } = req.body;
+
+        try {
+            const userToken = await Token.findOne({ token, userId: id });
+
+            if (!userToken || Date.now() >= userToken.expiresAt) {
+                return res.status(400).json({
+                    message:
+                        "Your password reset link may have expired. Please request a new one.",
+                });
+            }
+
+            const user = await User.findById(id);
+            if (!user) {
+                return res.status(404).json({
+                    message:
+                        "No user found for this password reset. Please sign up.",
+                });
+            }
+
+            const s = await bcrypt.genSalt(Number(salt));
+            const hashedPassword = await bcrypt.hash(password, s);
+
+            user.passwordHash = hashedPassword;
+            await user.save();
+
+            await Token.deleteMany({
+                userId: user._id,
+                type: "password-reset",
+            });
+
+            return res.status(200).json({
+                message: "Your password has been successfully reset.",
+            });
+        } catch (error) {
+            console.error("Password Reset Error:", error);
+            return res.status(500).json({
+                message:
+                    "An error occurred while resetting your password. Please try again.",
+            });
+        }
+    }),
+];
+
+exports.sendEmail_post = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    try {
+        await sendingMail({
+            to: email,
+            subject: "YOKOSO",
+            text: `yokoso, watashi no soul society...`,
+        });
+        return res.status(200).json({ message: "Email sent successfully" });
+    } catch (error) {
+        console.error("Error in sending email:", error);
+        return res.status(500).json({
+            message:
+                "An error occurred while sending the email. Please try again.",
+        });
+    }
+});
