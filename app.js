@@ -11,6 +11,7 @@ const swaggerSetup = require("./swagger/swaggerConfig");
 
 let scholarshipRouter = require("./routes/scholarship");
 let authRouter = require("./routes/auth");
+let userRouter = require("./routes/user");
 
 let app = express();
 
@@ -37,10 +38,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
+app.use("/uploads", express.static("uploads"));
 
 // routes
 app.use("/scholarships", scholarshipRouter);
 app.use("/auth", authRouter);
+app.use("/users", userRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
