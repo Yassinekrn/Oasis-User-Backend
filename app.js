@@ -5,6 +5,7 @@ let logger = require("morgan");
 let mongoose = require("mongoose");
 let cors = require("cors");
 require("dotenv").config();
+let cookieParser = require("cookie-parser");
 
 const swaggerSetup = require("./swagger/swaggerConfig");
 
@@ -35,6 +36,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(cookieParser());
 
 // routes
 app.use("/scholarships", scholarshipRouter);
