@@ -3,10 +3,10 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 //function to send email to the user
-module.exports.sendingMail = async ({ from, to, subject, text }) => {
+module.exports.sendingMail = async ({ to, subject, text }) => {
     try {
         let mailOptions = {
-            from,
+            from: process.env.EMAIL_FROM,
             to,
             subject,
             text,
