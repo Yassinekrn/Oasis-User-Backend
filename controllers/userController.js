@@ -257,3 +257,60 @@ exports.deleteUser_post = [
         res.json({ message: "User deleted successfully" });
     }),
 ];
+
+exports.addFavorite_post = [
+    verifyToken,
+    asyncHandler(async (req, res) => {
+        let user = await User.findById(req.userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (user.favoriteScholarships.includes(req.body.scholarshipId)) {
+            return res.status(400).json({
+                message: "Scholarship already in favorites",
+            });
+        }
+
+        user.favoriteScholarships.push(req.body.scholarshipId);
+        await user.save();
+
+        res.json({ message: "Scholarship added to favorites" });
+    }),
+];
+
+exports.getFavorites_get = [
+    verifyToken,
+    asyncHandler(async (req, res) => {
+        let user = await User.findById(req.userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json(user.favoriteScholarships);
+    }),
+];
+
+exports.removeFavorite_post = [
+    verifyToken,
+    asyncHandler(async (req, res) => {
+        let user = await User.findById(req.userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (!user.favoriteScholarships.includes(req.body.scholarshipId)) {
+            return res.status(400).json({
+                message: "Scholarship not in favorites",
+            });
+        }
+
+        user.favoriteScholarships = user.favoriteScholarships.filter(
+            (id) => id !== req.body.scholarshipId
+        );
+        await user.save();
+
+        res.json({ message: "Scholarship removed from favorites" });
+    }),
+];
