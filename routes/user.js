@@ -16,4 +16,11 @@ router.post("/update-email", userController.updateEmail_post);
 
 router.post("/delete", userController.deleteUser_post);
 
+// add scholarship to favorites
+router.post("/add-favorite", userController.addFavorite_post);
+
+router.get("/favorites", userController.getFavorites_get);
+
+router.post("/remove-favorite", userController.removeFavorite_post);
+
 module.exports = router;

@@ -66,6 +66,7 @@ exports.scholarship_detail = asyncHandler(async (req, res) => {
     res.json(scholarship);
 });
 
+// change it if you want to change the scholarship schema ( also, maybe suggest a gte or lte for the deadline)
 exports.scholarship_by_deadline = asyncHandler(async (req, res) => {
     const searchDeadline = req.params.deadline;
 
@@ -90,3 +91,7 @@ exports.scholarship_by_deadline = asyncHandler(async (req, res) => {
 
     res.json(scholarships);
 });
+
+// add a controller that based on some common fields in scholarship schema and user schema, it will suggest scholarships to the user
+// button that searches all compatible scholarships
+// button on each scholarship that checks the user's compatibility with the scholarship
