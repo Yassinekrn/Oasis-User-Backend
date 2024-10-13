@@ -185,7 +185,30 @@ exports.signup_post = [
             sendingMail({
                 to: user.email,
                 subject: "Account Verification",
-                text: `Hello ${user.firstName}, please verify your email by clicking this link: http://localhost:${process.env.PORT}/auth/verify-email/${user.id}/${emailVerificationToken}`,
+                html: `
+        <div style="font-family: Arial, sans-serif; color: #333;">
+          <h2 style="color: #4CAF50;">Hello ${user.firstName},</h2>
+          <p>
+            Thank you for registering on our platform. To complete your registration and verify your account, please click the button below:
+          </p>
+          <a href="http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}" 
+             style="display: inline-block; padding: 10px 20px; margin: 20px 0; font-size: 16px; color: #fff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
+             Verify Email
+          </a>
+          <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
+          <p>
+            <a href="http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}">
+              http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}
+            </a>
+          </p>
+          <p>
+            If you did not create an account, you can safely ignore this email.
+          </p>
+          <p style="font-size: 12px; color: #999;">
+            Best regards,<br>The Scholarship Oasis Team
+          </p>
+        </div>
+      `,
             });
 
             const accessToken = jwt.sign(
@@ -260,7 +283,30 @@ exports.resendVerificationEmail_post = asyncHandler(async (req, res) => {
         sendingMail({
             to: user.email,
             subject: "Account Verification",
-            text: `Hello ${user.firstName}, please verify your email by clicking this link: http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}`,
+            html: `
+    <div style="font-family: Arial, sans-serif; color: #333;">
+      <h2 style="color: #4CAF50;">Hello ${user.firstName},</h2>
+      <p>
+        Thank you for registering on our platform. To complete your registration and verify your account, please click the button below:
+      </p>
+      <a href="http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}" 
+         style="display: inline-block; padding: 10px 20px; margin: 20px 0; font-size: 16px; color: #fff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
+         Verify Email
+      </a>
+      <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
+      <p>
+        <a href="http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}">
+          http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}
+        </a>
+      </p>
+      <p>
+        If you did not create an account, you can safely ignore this email.
+      </p>
+      <p style="font-size: 12px; color: #999;">
+        Best regards,<br>The Scholarship Oasis Team
+      </p>
+    </div>
+  `,
         });
 
         return res.status(200).json({
@@ -353,8 +399,31 @@ exports.forgotPassword_post = asyncHandler(async (req, res) => {
 
         sendingMail({
             to: user.email,
-            subject: "Password Reset",
-            text: `Hello ${user.firstName}, please reset your password by clicking this link: http://localhost:${process.env.PORT}/auth/reset-password/${user._id}/${resetToken}`,
+            subject: "Password Reset Request",
+            html: `
+              <div style="font-family: Arial, sans-serif; color: #333;">
+                <h2 style="color: #FF6F61;">Hello ${user.firstName},</h2>
+                <p>
+                  We received a request to reset your password. You can reset your password by clicking the button below:
+                </p>
+                <a href="http://localhost:${process.env.PORT}/auth/reset-password/${user._id}/${resetToken}" 
+                   style="display: inline-block; padding: 10px 20px; margin: 20px 0; font-size: 16px; color: #fff; background-color: #FF6F61; text-decoration: none; border-radius: 5px;">
+                   Reset Password
+                </a>
+                <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
+                <p>
+                  <a href="http://localhost:${process.env.PORT}/auth/reset-password/${user._id}/${resetToken}">
+                    http://localhost:${process.env.PORT}/auth/reset-password/${user._id}/${resetToken}
+                  </a>
+                </p>
+                <p>
+                  If you did not request a password reset, please ignore this email or contact support if you have any concerns.
+                </p>
+                <p style="font-size: 12px; color: #999;">
+                  Best regards,<br>The Scholarship Oasis Team
+                </p>
+              </div>
+            `,
         });
 
         return res.status(200).json({
@@ -439,21 +508,3 @@ exports.resetPassword_post = [
         }
     }),
 ];
-
-exports.sendEmail_post = asyncHandler(async (req, res) => {
-    const { email } = req.body;
-    try {
-        await sendingMail({
-            to: email,
-            subject: "YOKOSO",
-            text: `yokoso, watashi no soul society...`,
-        });
-        return res.status(200).json({ message: "Email sent successfully" });
-    } catch (error) {
-        console.error("Error in sending email:", error);
-        return res.status(500).json({
-            message:
-                "An error occurred while sending the email. Please try again.",
-        });
-    }
-});

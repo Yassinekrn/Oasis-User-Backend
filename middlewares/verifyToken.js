@@ -32,9 +32,8 @@ function verifyToken(req, res, next) {
             // Unauthorized - Invalid token
             return res.status(401).send("Unauthorized - Invalid token");
         }
-
         // Token is valid, you can access the decoded information (e.g., user ID) using decoded variable
-        req.userId = decoded.user._id;
+        req.userId = decoded.user;
 
         // Move to the next middleware
         next();
