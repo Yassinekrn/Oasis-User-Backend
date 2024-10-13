@@ -6,7 +6,7 @@ let Scholarship = require("../models/scholarship");
 let scholarshipController = require("../controllers/scholarshipController");
 
 // Get a list of all scholarships
-router.get("", scholarshipController.scholarship_list);
+router.get("/", scholarshipController.scholarship_list);
 
 // Get a distinct list of scholarship locations
 router.get("/locations", scholarshipController.scholarships_locations);
