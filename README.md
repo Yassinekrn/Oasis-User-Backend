@@ -1,7 +1,3 @@
-Here's an updated version of your README to include all the endpoints from your routes files:
-
----
-
 ## **Scholarship Endpoints**
 
 1. **Display list of all scholarships**
@@ -155,7 +151,3 @@ Here's an updated version of your README to include all the endpoints from your 
     - **HTTP Method**: `POST`
     - **Endpoint**: `/users/remove-favorite`
     - **Description**: Removes a scholarship from the user's favorites list.
-
----
-
-This version includes all the routes for scholarships, authentication, and user actions. Let me know if you'd like further tweaks!
