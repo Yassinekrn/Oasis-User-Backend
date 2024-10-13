@@ -3,12 +3,13 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 //function to send email to the user
-module.exports.sendingMail = async ({ to, subject, text }) => {
+module.exports.sendingMail = async ({ to, subject, text, html }) => {
     try {
         let mailOptions = {
             from: process.env.EMAIL_FROM,
             to,
             subject,
+            html,
             text,
         };
         //asign createTransport method in nodemailer to a variable

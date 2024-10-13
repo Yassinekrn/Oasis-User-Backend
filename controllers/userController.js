@@ -25,7 +25,7 @@ const isEnumValid = (value, enumValues) => {
 exports.profile_get = [
     verifyToken,
     asyncHandler(async (req, res, next) => {
-        const user = await User.findById(req.userId).select("-password");
+        const user = await User.findById(req.userId).select("-passwordHash");
         res.json(user);
     }),
 ];
@@ -33,7 +33,7 @@ exports.profile_get = [
 exports.getUserById_get = [
     verifyToken,
     asyncHandler(async (req, res, next) => {
-        const user = await User.findById(req.params.id).select("-password");
+        const user = await User.findById(req.params.id).select("-passwordHash");
         res.json(user);
     }),
 ];
@@ -228,13 +228,19 @@ exports.updateEmail_post = [
             });
         }
 
+        // if (user.email === req.body.email) {
+        //     return res.status(400).json({
+        //         message: "New email is the same as the current email",
+        //     });
+        // }
+
         user.email = req.body.email;
         user.isVerified = false;
         await user.save();
 
         res.json({
             message:
-                "Email updated successfully, note that you have to reverify.",
+                "Email updated successfully, please makes sure to verify it.",
         });
     }),
 ];
