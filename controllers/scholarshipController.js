@@ -3,9 +3,9 @@ const Scholarship = require("../models/scholarship");
 
 // Display list of all scholarships
 exports.scholarship_list = asyncHandler(async (req, res) => {
-    const scholarships = await Scholarship.find();
+    const scholarships = await Scholarship.find({ status: "Approved" });
     if (!scholarships || scholarships.length === 0) {
-        return res.status(404).json({ message: "No scholarships found" });
+        return res.status(404).json({ message: "No approved scholarships found" });
     }
     res.json(scholarships);
 });

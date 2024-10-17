@@ -21,7 +21,7 @@ router.get(
 router.get("/search", scholarshipController.scholarship_by_name);
 
 // Get details of a specific scholarship by ID
-router.get("/:id", scholarshipController.scholarship_detail);
+router.get("/id/:id", scholarshipController.scholarship_detail);
 
 // Get scholarships by deadline (YYYY-MM-DD format)
 router.get(

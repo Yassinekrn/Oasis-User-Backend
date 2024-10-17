@@ -125,7 +125,7 @@ exports.signup_post = [
     body("email", "Valid email is required")
         .trim()
         .isEmail()
-        .normalizeEmail()
+        // .normalizeEmail() //Coz it fucks up the email
         .custom(async (value) => {
             const existingUser = await User.findOne({ email: value }).exec();
             if (existingUser) {
@@ -186,29 +186,29 @@ exports.signup_post = [
                 to: user.email,
                 subject: "Account Verification",
                 html: `
-        <div style="font-family: Arial, sans-serif; color: #333;">
-          <h2 style="color: #4CAF50;">Hello ${user.firstName},</h2>
-          <p>
-            Thank you for registering on our platform. To complete your registration and verify your account, please click the button below:
-          </p>
-          <a href="http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}" 
-             style="display: inline-block; padding: 10px 20px; margin: 20px 0; font-size: 16px; color: #fff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
-             Verify Email
-          </a>
-          <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
-          <p>
-            <a href="http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}">
-              http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}
-            </a>
-          </p>
-          <p>
-            If you did not create an account, you can safely ignore this email.
-          </p>
-          <p style="font-size: 12px; color: #999;">
-            Best regards,<br>The Scholarship Oasis Team
-          </p>
-        </div>
-      `,
+                    <div style="font-family: Arial, sans-serif; color: #333;">
+                    <h2 style="color: #4CAF50;">Hello ${user.firstName},</h2>
+                    <p>
+                        Thank you for registering on our platform. To complete your registration and verify your account, please click the button below:
+                    </p>
+                    <a href="http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${emailVerificationToken}" 
+                        style="display: inline-block; padding: 10px 20px; margin: 20px 0; font-size: 16px; color: #fff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
+                        Verify Email
+                    </a>
+                    <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
+                    <p>
+                        <a href="http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${emailVerificationToken}">
+                        http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${emailVerificationToken}
+                        </a>
+                    </p>
+                    <p>
+                        If you did not create an account, you can safely ignore this email.
+                    </p>
+                    <p style="font-size: 12px; color: #999;">
+                        Best regards,<br>The Scholarship Oasis Team
+                    </p>
+                    </div>
+                `,
             });
 
             const accessToken = jwt.sign(
@@ -284,29 +284,29 @@ exports.resendVerificationEmail_post = asyncHandler(async (req, res) => {
             to: user.email,
             subject: "Account Verification",
             html: `
-    <div style="font-family: Arial, sans-serif; color: #333;">
-      <h2 style="color: #4CAF50;">Hello ${user.firstName},</h2>
-      <p>
-        Thank you for registering on our platform. To complete your registration and verify your account, please click the button below:
-      </p>
-      <a href="http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}" 
-         style="display: inline-block; padding: 10px 20px; margin: 20px 0; font-size: 16px; color: #fff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
-         Verify Email
-      </a>
-      <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
-      <p>
-        <a href="http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}">
-          http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}
-        </a>
-      </p>
-      <p>
-        If you did not create an account, you can safely ignore this email.
-      </p>
-      <p style="font-size: 12px; color: #999;">
-        Best regards,<br>The Scholarship Oasis Team
-      </p>
-    </div>
-  `,
+                <div style="font-family: Arial, sans-serif; color: #333;">
+                <h2 style="color: #4CAF50;">Hello ${user.firstName},</h2>
+                <p>
+                    Thank you for registering on our platform. To complete your registration and verify your account, please click the button below:
+                </p>
+                <a href="http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}" 
+                    style="display: inline-block; padding: 10px 20px; margin: 20px 0; font-size: 16px; color: #fff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
+                    Verify Email
+                </a>
+                <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
+                <p>
+                    <a href="http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}">
+                    http://localhost:${process.env.PORT}/auth/verify-email/${user._id}/${newToken}
+                    </a>
+                </p>
+                <p>
+                    If you did not create an account, you can safely ignore this email.
+                </p>
+                <p style="font-size: 12px; color: #999;">
+                    Best regards,<br>The Scholarship Oasis Team
+                </p>
+                </div>
+            `,
         });
 
         return res.status(200).json({

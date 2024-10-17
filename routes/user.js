@@ -4,7 +4,7 @@ let userController = require("../controllers/userController");
 
 router.get("/profile", userController.profile_get);
 
-router.get("/:id", userController.getUserById_get);
+router.get("/id/:id", userController.getUserById_get);
 
 router.post("/change-password", userController.changePassword_post);
 

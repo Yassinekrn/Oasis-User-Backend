@@ -28,6 +28,7 @@ db.on("error", console.error.bind(console, "mongo connection error"));
 app.use(
     cors({
         origin: process.env.FRONTEND_URL, // Allow requests from this origin
+        credentials: true,     
         optionsSuccessStatus: 200, // legacy browsers choke on 204
         allowedHeaders: ["Content-Type", "Authorization"],
     })
