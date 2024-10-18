@@ -91,9 +91,9 @@ exports.updateProfile_post = [
             "yearOfStudy",
             "levelOfStudy",
             "fieldOfStudy",
-            "isEligibleForNeedBasedScholarships",
-            "preferredScholarshipType",
-            "countryOfScholarshipInterest",
+            // "isEligibleForNeedBasedScholarships",
+            // "preferredScholarshipType",
+            // "countryOfScholarshipInterest",
         ];
 
         const errors = [];
@@ -139,23 +139,23 @@ exports.updateProfile_post = [
                             user.levelOfStudy = req.body.levelOfStudy;
                         }
                         break;
-                    case "preferredScholarshipType":
-                        if (
-                            !isEnumValid(req.body.preferredScholarshipType, [
-                                "need-based",
-                                "merit-based",
-                                "both",
-                            ])
-                        ) {
-                            errors.push({
-                                field,
-                                msg: "Invalid preferred scholarship type",
-                            });
-                        } else {
-                            user.preferredScholarshipType =
-                                req.body.preferredScholarshipType;
-                        }
-                        break;
+                    // case "preferredScholarshipType":
+                    //     if (
+                    //         !isEnumValid(req.body.preferredScholarshipType, [
+                    //             "need-based",
+                    //             "merit-based",
+                    //             "both",
+                    //         ])
+                    //     ) {
+                    //         errors.push({
+                    //             field,
+                    //             msg: "Invalid preferred scholarship type",
+                    //         });
+                    //     } else {
+                    //         user.preferredScholarshipType =
+                    //             req.body.preferredScholarshipType;
+                    //     }
+                    //     break;
                     default:
                         // For all other fields, directly update
                         user[field] = req.body[field];
@@ -228,11 +228,11 @@ exports.updateEmail_post = [
             });
         }
 
-        // if (user.email === req.body.email) {
-        //     return res.status(400).json({
-        //         message: "New email is the same as the current email",
-        //     });
-        // }
+        if (user.email === req.body.email) {
+            return res.status(400).json({
+                message: "New email is the same as the current email",
+            });
+        }
 
         user.email = req.body.email;
         user.isVerified = false;

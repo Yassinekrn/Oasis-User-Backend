@@ -28,13 +28,13 @@ const userSchema = new Schema(
             enum: ["undergraduate", "graduate", "postgraduate", "other"],
         },
         fieldOfStudy: { type: String },
-        isEligibleForNeedBasedScholarships: { type: Boolean, default: false },
-        preferredScholarshipType: {
-            type: String,
-            enum: ["need-based", "merit-based", "both"],
-            default: "both",
-        },
-        countryOfScholarshipInterest: { type: String },
+        // isEligibleForNeedBasedScholarships: { type: Boolean, default: false },
+        // preferredScholarshipType: {
+        //     type: String,
+        //     enum: ["need-based", "merit-based", "both"],
+        //     default: "both",
+        // },
+        // countryOfScholarshipInterest: { type: String },
 
         // Additional Attributes
         createdAt: { type: Date, default: Date.now },
