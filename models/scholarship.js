@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const statusEnum = ["Pending", "Approved", "Rejected"];
+const aiEvaluationEnum = ["Accepted", "Rejected", "Non Evaluated"];
 
 const Schema = mongoose.Schema;
 
@@ -21,6 +22,11 @@ const scholarshipSchema = new Schema({
         required: true,
         enum: statusEnum,
         default: statusEnum[0],
+    },
+    aiEvaluation: {
+        type: String,
+        enum: aiEvaluationEnum,
+        default: aiEvaluationEnum[2],
     },
 });
 

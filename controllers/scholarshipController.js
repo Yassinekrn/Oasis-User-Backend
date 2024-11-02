@@ -48,10 +48,17 @@ exports.scholarship_by_location = asyncHandler(async (req, res) => {
 });
 
 exports.scholarships_locations = asyncHandler(async (req, res) => {
-    const locations = await Scholarship.distinct("location");
+    const locations = await Scholarship.distinct("location", {
+        status: "Approved",
+    });
 
     if (!locations || locations.length === 0) {
-        return res.status(404).json({ message: "No distinct locations found" });
+        return res
+            .status(404)
+            .json({
+                message:
+                    "No distinct locations found for the approved scholarships",
+            });
     }
 
     // Sort the locations alphabetically
