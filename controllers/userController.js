@@ -6,6 +6,8 @@ const sgMail = require("@sendgrid/mail");
 const { uploadProfileImage } = require("../multer");
 
 const User = require("../models/user");
+const Scholarship = require("../models/scholarship");
+const Notification = require("../models/notification");
 let verifyToken = require("../middlewares/verifyToken");
 
 require("dotenv").config();
@@ -312,5 +314,50 @@ exports.removeFavorite_post = [
         await user.save();
 
         res.json({ message: "Scholarship removed from favorites" });
+    }),
+];
+
+// controller that checks all the scholarships that the user has favorited, and create a notification for each one of them if the deadline is coming soon (1 month before)
+exports.checkFavoriteScholarships_get = [
+    verifyToken,
+    asyncHandler(async (req, res) => {
+        // get all the favorite scholarships of the user
+        let user = await User.findById(req.userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        let favoriteScholarships = user.favoriteScholarships;
+
+        // check if the deadline of each scholarship is coming soon (1 month before)
+        for (let i = 0; i < favoriteScholarships.length; i++) {
+            let scholarship = await Scholarship.findById(
+                favoriteScholarships[i]
+            );
+
+            if (scholarship.deadline) {
+                // if there is "th" in the deadline, remove it
+                let cleanDeadline = scholarship.deadline.replace(/th/g, "");
+                let deadline = new Date(cleanDeadline);
+                // if deadline is invalidDate, skip it
+                if (deadline.toString() === "Invalid Date") {
+                    continue;
+                }
+                let today = new Date();
+                let oneMonthBefore = new Date(
+                    today.getTime() + 30 * 24 * 60 * 60 * 1000
+                );
+                if (deadline < oneMonthBefore) {
+                    // create a notification for the user
+                    let notification = await Notification.create({
+                        recipientId: req.userId,
+                        scholarshipId: favoriteScholarships[i],
+                        message:
+                            "The deadline of one of your favorite scholarships is coming soon",
+                    });
+                }
+            }
+        }
+
+        res.json({ message: "Notifications created successfully" });
     }),
 ];
