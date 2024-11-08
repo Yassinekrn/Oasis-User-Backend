@@ -23,4 +23,9 @@ router.get("/favorites", userController.getFavorites_get);
 
 router.post("/remove-favorite", userController.removeFavorite_post);
 
+router.get(
+    "/check-favorite-scholarships",
+    userController.checkFavoriteScholarships_get
+);
+
 module.exports = router;

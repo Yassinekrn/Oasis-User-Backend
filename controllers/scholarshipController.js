@@ -53,12 +53,10 @@ exports.scholarships_locations = asyncHandler(async (req, res) => {
     });
 
     if (!locations || locations.length === 0) {
-        return res
-            .status(404)
-            .json({
-                message:
-                    "No distinct locations found for the approved scholarships",
-            });
+        return res.status(404).json({
+            message:
+                "No distinct locations found for the approved scholarships",
+        });
     }
 
     // Sort the locations alphabetically

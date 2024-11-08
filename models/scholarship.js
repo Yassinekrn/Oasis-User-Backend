@@ -28,6 +28,7 @@ const scholarshipSchema = new Schema({
         enum: aiEvaluationEnum,
         default: aiEvaluationEnum[2],
     },
+    rejectedAt: { type: Date, default: null },
 });
 
 // Bug: url attribute conflicting with the virtual below
