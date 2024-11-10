@@ -4,8 +4,13 @@ const { Schema } = mongoose;
 const notificationSchema = new Schema({
   recipientId: {
     type: Schema.Types.ObjectId,
-    ref: "User",
     required: true,
+    refPath: "recipientType",
+  },
+  recipientType: {
+    type: String,
+    required: true,
+    enum: ["User", "Admin"], // Only allow 'User' or 'Admin'
   },
   scholarshipId: {
     type: Schema.Types.ObjectId,
@@ -28,5 +33,4 @@ const notificationSchema = new Schema({
 });
 
 const Notification = mongoose.model("Notification", notificationSchema);
-
 module.exports = Notification;
