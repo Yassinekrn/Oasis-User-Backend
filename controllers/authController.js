@@ -329,7 +329,7 @@ exports.verifyEmail_get = asyncHandler(async (req, res) => {
         const userToken = await Token.findOne({ token, userId: id });
 
         if (!userToken || Date.now() >= userToken.expiresAt) {
-            return res.status(400).json({
+            return res.status(400).render("verificationError", {
                 message:
                     "Your verification link may have expired. Please request a new one.",
             });
@@ -337,15 +337,13 @@ exports.verifyEmail_get = asyncHandler(async (req, res) => {
 
         const user = await User.findById(id);
         if (!user) {
-            return res.status(404).json({
+            return res.status(404).render("verificationError", {
                 message: "No user found for this verification. Please sign up.",
             });
         }
 
         if (user.isVerified) {
-            return res.status(200).json({
-                message: "This account is already verified. Please log in.",
-            });
+            return res.status(200).render("verificationSuccess");
         }
 
         user.isVerified = true;
@@ -353,12 +351,10 @@ exports.verifyEmail_get = asyncHandler(async (req, res) => {
 
         await userToken.deleteOne();
 
-        return res.status(200).json({
-            message: "Your account has been successfully verified.",
-        });
+        return res.status(200).render("verificationSuccess");
     } catch (error) {
         console.error("Verification Error:", error);
-        return res.status(500).json({
+        return res.status(500).render("verificationError", {
             message:
                 "An error occurred while verifying your email. Please try again.",
         });
