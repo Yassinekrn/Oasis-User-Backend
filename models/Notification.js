@@ -17,6 +17,10 @@ const notificationSchema = new Schema({
     required: true,
     trim: true,
   },
+  isRead: {
+    type: Boolean,
+    default: false,
+  },
   date: {
     type: Date,
     default: Date.now,

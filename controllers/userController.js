@@ -309,7 +309,7 @@ exports.removeFavorite_post = [
         }
 
         user.favoriteScholarships = user.favoriteScholarships.filter(
-            (id) => id !== req.body.scholarshipId
+            (id) => id.toString() !== req.body.scholarshipId
         );
         await user.save();
 
@@ -334,7 +334,7 @@ exports.checkFavoriteScholarships_get = [
                 favoriteScholarships[i]
             );
 
-            if (scholarship.deadline) {
+            if (scholarship && scholarship.deadline) {
                 // if there is "th" in the deadline, remove it
                 let cleanDeadline = scholarship.deadline.replace(/th/g, "");
                 let deadline = new Date(cleanDeadline);
@@ -347,17 +347,51 @@ exports.checkFavoriteScholarships_get = [
                     today.getTime() + 30 * 24 * 60 * 60 * 1000
                 );
                 if (deadline < oneMonthBefore) {
-                    // create a notification for the user
-                    let notification = await Notification.create({
+                    let existingNotification = await Notification.findOne({
                         recipientId: req.userId,
                         scholarshipId: favoriteScholarships[i],
-                        message:
-                            "The deadline of one of your favorite scholarships is coming soon",
                     });
+
+                    // Only create a new notification if one doesn't already exist
+                    if (!existingNotification) {
+                        await Notification.create({
+                            recipientId: req.userId,
+                            scholarshipId: favoriteScholarships[i],
+                            message: "The deadline of one of your favorite scholarships is coming soon",
+                            status: "unread",
+                        });
+                    }
                 }
             }
         }
 
         res.json({ message: "Notifications created successfully" });
+    }),
+];
+
+//Get user notifications
+exports.getNotifications_get = [
+    verifyToken,
+    asyncHandler(async (req, res) => {
+        let notifications = await Notification.find({
+            recipientId: req.userId,
+        });
+        res.json(notifications);
+    }),
+];
+
+// Mark notification as read
+exports.markNotificationAsRead_post = [
+    verifyToken,
+    asyncHandler(async (req, res) => {
+        let notification = await Notification.findById(req.params.id);
+        if (!notification) {
+            return res.status(404).json({ message: "Notification not found" });
+        }
+
+        notification.isRead = true;
+        await notification.save();
+
+        res.json({ message: "Notification marked as read" });
     }),
 ];
