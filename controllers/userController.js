@@ -7,7 +7,7 @@ const { uploadProfileImage } = require("../multer");
 
 const User = require("../models/user");
 const Scholarship = require("../models/scholarship");
-const Notification = require("../models/notification");
+const Notification = require("../models/Notification");
 let verifyToken = require("../middlewares/verifyToken");
 
 require("dotenv").config();
@@ -355,10 +355,12 @@ exports.checkFavoriteScholarships_get = [
                     // Only create a new notification if one doesn't already exist
                     if (!existingNotification) {
                         await Notification.create({
+                            recipientType: "User",
                             recipientId: req.userId,
                             scholarshipId: favoriteScholarships[i],
-                            message: "The deadline of one of your favorite scholarships is coming soon",
-                            status: "unread",
+                            message:
+                                "The deadline of one of your favorite scholarships is coming soon",
+                            isRead: false,
                         });
                     }
                 }
