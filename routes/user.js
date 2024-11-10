@@ -28,10 +28,7 @@ router.get(
     userController.checkFavoriteScholarships_get
 );
 
-router.get(
-    "/notifications",
-    userController.getNotifications_get
-);
+router.get("/notifications", userController.getNotifications_get);
 
 router.post(
     "/mark-notification-read/:id",
