@@ -349,6 +349,7 @@ exports.checkFavoriteScholarships_get = [
                 if (deadline < oneMonthBefore) {
                     // create a notification for the user
                     let notification = await Notification.create({
+                        recipientType: "User",
                         recipientId: req.userId,
                         scholarshipId: favoriteScholarships[i],
                         message:
