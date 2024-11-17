@@ -30,9 +30,18 @@ router.get(
 
 router.get("/notifications", userController.getNotifications_get);
 
+router.get("/unread-notifications-count", userController.getUnreadNotificationsCount_get);
+
 router.post(
     "/mark-notification-read/:id",
     userController.markNotificationAsRead_post
 );
+
+router.post(
+    "/mark-all-notifications-read",
+    userController.markAllNotificationsAsRead_post
+);
+
+router.get("/count", userController.user_count);
 
 module.exports = router;

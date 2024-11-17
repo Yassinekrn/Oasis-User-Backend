@@ -375,10 +375,26 @@ exports.checkFavoriteScholarships_get = [
 exports.getNotifications_get = [
     verifyToken,
     asyncHandler(async (req, res) => {
+        // Fetch notifications and populate scholarship details
         let notifications = await Notification.find({
             recipientId: req.userId,
-        });
+        }).populate('scholarshipId', 'title deadline');
+
         res.json(notifications);
+    }),
+];
+
+//Get user unread notifications count
+exports.getUnreadNotificationsCount_get = [
+    verifyToken,
+    asyncHandler(async (req, res) => {
+        // Count notifications where isRead is false for the current user
+        const unreadCount = await Notification.countDocuments({
+            recipientId: req.userId,
+            isRead: false,
+        });
+
+        res.json({ unreadCount });
     }),
 ];
 
@@ -386,14 +402,39 @@ exports.getNotifications_get = [
 exports.markNotificationAsRead_post = [
     verifyToken,
     asyncHandler(async (req, res) => {
-        let notification = await Notification.findById(req.params.id);
+        const { id } = req.params;
+
+        const notification = await Notification.findByIdAndUpdate(
+            id,
+            { isRead: true },
+            { new: true }
+        );
+
         if (!notification) {
             return res.status(404).json({ message: "Notification not found" });
         }
 
-        notification.isRead = true;
-        await notification.save();
+        res.json({ message: "Notification marked as read", notification });
+    }),
+];
 
-        res.json({ message: "Notification marked as read" });
+// Mark all notifications as read
+exports.markAllNotificationsAsRead_post = [
+    verifyToken,
+    asyncHandler(async (req, res) => {
+        await Notification.updateMany(
+            { recipientId: req.userId },
+            { isRead: true }
+        );
+
+        res.json({ message: "All notifications marked as read" });
+    }),
+];
+
+exports.user_count = [
+    asyncHandler(async (req, res) => {
+        const count = await User.countDocuments();
+
+        res.json({ count });
     }),
 ];

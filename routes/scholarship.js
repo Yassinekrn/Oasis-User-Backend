@@ -29,4 +29,6 @@ router.get(
     scholarshipController.scholarship_by_deadline
 );
 
+router.get("/count", scholarshipController.scholarship_count);
+
 module.exports = router;

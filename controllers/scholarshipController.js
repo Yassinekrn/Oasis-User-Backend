@@ -33,14 +33,20 @@ exports.scholarship_by_name = asyncHandler(async (req, res) => {
 exports.scholarship_by_location = asyncHandler(async (req, res) => {
     const searchLocation = req.params.location;
 
+    // Validate input
+    if (!searchLocation || typeof searchLocation !== "string") {
+        return res.status(400).json({ message: "Invalid location parameter" });
+    }
+
     // Use regular expression for partial matching (case-insensitive)
     const scholarships = await Scholarship.find({
         location: { $regex: searchLocation, $options: "i" },
+        status: "Approved",
     });
 
     if (!scholarships || scholarships.length === 0) {
         return res.status(404).json({
-            message: "No scholarships found in the specified location",
+            message: `No approved scholarships found in ${searchLocation}`,
         });
     }
 
@@ -88,15 +94,23 @@ exports.scholarship_by_deadline = asyncHandler(async (req, res) => {
     // Query scholarships directly by string comparison
     const scholarships = await Scholarship.find({
         deadline: searchDeadline,
-    });
+        status: "Approved",
+    }).sort({ deadline: 1 });
 
-    if (!scholarships || scholarships.length === 0) {
-        return res.status(404).json({
-            message: "No scholarships found with the specified deadline",
-        });
-    }
+    // if (!scholarships || scholarships.length === 0) {
+    //     return res.status(200).json({
+    //         message: "No approved scholarships found with the specified deadline.",
+    //     });
+    // }
 
-    res.json(scholarships);
+    // Return an empty array if no scholarships are found
+    res.json(scholarships || []);
+});
+
+exports.scholarship_count = asyncHandler(async (req, res) => {
+    const count = await Scholarship.countDocuments({ status: "Approved" });
+
+    res.json({ count });
 });
 
 // add a controller that based on some common fields in scholarship schema and user schema, it will suggest scholarships to the user
