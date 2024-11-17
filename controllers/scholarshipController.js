@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Scholarship = require("../models/scholarship");
+const axios = require("axios");
 
 // Display list of all scholarships
 exports.scholarship_list = asyncHandler(async (req, res) => {
@@ -80,31 +81,65 @@ exports.scholarship_detail = asyncHandler(async (req, res) => {
 });
 
 // change it if you want to change the scholarship schema ( also, maybe suggest a gte or lte for the deadline)
+// exports.scholarship_by_deadline = asyncHandler(async (req, res) => {
+//     const searchDeadline = req.params.deadline;
+
+//     // Check if the format is YYYY-MM-DD
+//     const regex = /^\d{4}-\d{2}-\d{2}$/;
+//     if (!regex.test(searchDeadline)) {
+//         return res
+//             .status(400)
+//             .json({ message: "Invalid date format. Use YYYY-MM-DD." });
+//     }
+
+//     // Query scholarships directly by string comparison
+//     const scholarships = await Scholarship.find({
+//         deadline: searchDeadline,
+//         status: "Approved",
+//     }).sort({ deadline: 1 });
+
+//     // if (!scholarships || scholarships.length === 0) {
+//     //     return res.status(200).json({
+//     //         message: "No approved scholarships found with the specified deadline.",
+//     //     });
+//     // }
+
+//     // Return an empty array if no scholarships are found
+//     res.json(scholarships || []);
+// });
+
 exports.scholarship_by_deadline = asyncHandler(async (req, res) => {
-    const searchDeadline = req.params.deadline;
+  const searchDeadline = req.params.deadline;
 
-    // Check if the format is YYYY-MM-DD
-    const regex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!regex.test(searchDeadline)) {
-        return res
-            .status(400)
-            .json({ message: "Invalid date format. Use YYYY-MM-DD." });
-    }
+  // Validate the format
+  const regex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!regex.test(searchDeadline)) {
+    return res
+      .status(400)
+      .json({ message: "Invalid date format. Use YYYY-MM-DD." });
+  }
 
-    // Query scholarships directly by string comparison
-    const scholarships = await Scholarship.find({
-        deadline: searchDeadline,
-        status: "Approved",
-    }).sort({ deadline: 1 });
+  // Fetch all approved scholarships
+  const scholarships = await Scholarship.find({ status: "Approved" });
 
-    // if (!scholarships || scholarships.length === 0) {
-    //     return res.status(200).json({
-    //         message: "No approved scholarships found with the specified deadline.",
-    //     });
-    // }
-
-    // Return an empty array if no scholarships are found
-    res.json(scholarships || []);
+  // Send all scholarships to the LLM service
+  try {
+    const response = await axios.post(
+      "http://localhost:5000/filter_by_deadline",
+      {
+        date: searchDeadline,
+        scholarships: scholarships,
+      }
+    );
+    console.log(response);
+    
+    res.json(response.data); // Return matched scholarships
+  } catch (error) {
+    console.error("Error filtering scholarships:", error.message);
+    res
+      .status(500)
+      .json({ message: "An error occurred while filtering scholarships." });
+  }
 });
 
 exports.scholarship_count = asyncHandler(async (req, res) => {
