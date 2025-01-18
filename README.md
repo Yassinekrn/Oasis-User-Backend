@@ -1,153 +1,149 @@
-## **Scholarship Endpoints**
+# 🌟 Oasis User Backend
 
-1. **Display list of all scholarships**
+![Oasis User Backend](./assets/oasis-banner.png)
 
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/scholarships`
-    - **Description**: Returns a list of all scholarships.
+[![Node.js](https://img.shields.io/badge/Node.js-18.x-brightgreen)](https://nodejs.org/) [![Express.js](https://img.shields.io/badge/Express.js-4.x-lightgrey)](https://expressjs.com/) [![MongoDB](https://img.shields.io/badge/MongoDB-6.x-brightgreen)](https://www.mongodb.com/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](./LICENSE)
 
-2. **Search scholarships by name**
+Oasis User Backend is the backend service for the user-facing section of the Oasis Scholarships Platform. This service provides a RESTful API for managing user accounts, scholarships, and advanced features such as complex search filters and user notifications.
 
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/scholarships/search`
-    - **Query Parameter**: `name`
-    - **Description**: Returns a list of scholarships that match or partially match the `name` parameter in the query string.
+---
 
-3. **Search scholarships by location**
+## 📖 **Table of Contents**
 
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/scholarships/location/:location`
-    - **Description**: Returns scholarships available in a specific location.
+1. [Features](#features)
+2. [Technology Stack](#technology-stack)
+3. [API Documentation](#api-documentation)
+4. [Installation](#installation)
+5. [Usage](#usage)
+6. [Contributing](#contributing)
+7. [License](#license)
+8. [Acknowledgments](#acknowledgments)
 
-4. **Get distinct list of scholarship locations**
+---
 
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/scholarships/locations`
-    - **Description**: Returns a distinct list of locations where scholarships are available.
+## ✨ **Features**
 
-5. **Get details of a specific scholarship by ID**
+-   **User Management**
 
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/scholarships/:id`
-    - **Description**: Returns details of a specific scholarship by its ID.
+    -   User registration, login, and CRUD operations.
+    -   Account verification and password recovery procedures.
 
-6. **Search scholarships by deadline**
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/scholarships/deadline/:deadline`
-    - **Description**: Returns scholarships with a deadline on the specified date.
+-   **Scholarship Management**
 
-## **Authentication Endpoints**
+    -   Complex search with advanced filters (IDs, locations, deadlines).
+    -   Add/remove scholarships from user favorites.
+    -   Follow scholarships to receive notifications.
 
-1. **Sign up a new user**
+-   **Security**
+    -   Secure authentication and data handling.
+    -   Robust protection against common vulnerabilities.
 
-    - **HTTP Method**: `POST`
-    - **Endpoint**: `/auth/signup`
-    - **Description**: Registers a new user with first name, last name, email, password, and confirm password.
+---
 
-2. **Log in an existing user**
+## 🛠️ **Technology Stack**
 
-    - **HTTP Method**: `POST`
-    - **Endpoint**: `/auth/login`
-    - **Description**: Logs in a user with email and password. Returns an access token and sets a refresh token in a cookie.
+This project is built with the following technologies and packages:
 
-3. **Verify email address**
+| Package              | Purpose                                                                     |
+| -------------------- | --------------------------------------------------------------------------- |
+| `bcrypt`             | For hashing passwords to securely store sensitive user credentials.         |
+| `cookie-parser`      | To parse and manage HTTP cookies.                                           |
+| `cors`               | Enables Cross-Origin Resource Sharing for secure client-server interaction. |
+| `express-validator`  | Middleware for validating and sanitizing incoming user inputs.              |
+| `helmet`             | Adds security headers to protect against common web vulnerabilities.        |
+| `jsonwebtoken`       | Implements secure authentication using JSON Web Tokens (JWT).               |
+| `mongoose`           | Object Data Modeling (ODM) for MongoDB, simplifying database interactions.  |
+| `morgan`             | Logs HTTP requests for better monitoring and debugging.                     |
+| `multer`             | Middleware for handling file uploads.                                       |
+| `nodemailer`         | Sends email notifications for account verification and password recovery.   |
+| `swagger-ui-express` | Provides interactive API documentation using Swagger UI.                    |
 
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/auth/verify-email/:id/:token`
-    - **Description**: Verifies a user’s email by matching the user’s ID and token sent via email.
+---
 
-4. **Resend verification email**
+## 📑 **API Documentation**
 
-    - **HTTP Method**: `POST`
-    - **Endpoint**: `/auth/resend-verification-email`
-    - **Description**: Resends the email verification link to the user's email address.
+The project includes Swagger-based API documentation for developers to easily explore and test the available endpoints.  
+To access the documentation, start the server and navigate to:  
+`http://<server-host>:<server-port>/api-docs`
 
-5. **Forgot password**
+---
 
-    - **HTTP Method**: `POST`
-    - **Endpoint**: `/auth/forgot-password`
-    - **Description**: Sends a reset password link to the user’s email.
+## ⚙️ **Installation**
 
-6. **Reset password**
+Follow these steps to set up and run the project locally:
 
-    - **HTTP Method**: `POST`
-    - **Endpoint**: `/auth/reset-password/:id/:token`
-    - **Description**: Resets a user’s password using the ID and token from the reset link.
+1. **Clone the repository**:
+    ```bash
+    git clone https://github.com/Yassinekrn/Oasis-User-Backend.git
+    ```
+2. **Navigate to the project directory**:
+    ```bash
+    cd Oasis-User-Backend
+    ```
+3. **Install dependencies**:
+    ```bash
+    npm install
+    ```
+4. **Configure environment variables**:  
+   Create a `.env` file in the root directory and specify the following:
+    ```plaintext
+    MONGODB_URI=<your-mongodb-uri>
+    FRONTEND_URL=<your-frontend-url>
+    EMAIL_FROM=<your-email>
+    PORT=<server-port>
+    SALT=<bcrypt-salt>
+    ACCESS_JWT_SECRET=<access-jwt-secret>
+    REFRESH_JWT_SECRET=<refresh-jwt-secret>
+    SENDGRID_API_KEY=<sendgrid-api-key>
+    NODE_ENV=development
+    ```
+5. **Start the server**:
+    ```bash
+    npm start
+    ```
 
-7. **Verify access token**
+---
 
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/auth/verify-token`
-    - **Description**: Verifies if the current access token is valid or expired.
+## 🚀 **Usage**
 
-8. **Logout a user**
+-   **Development Mode**:
+    ```bash
+    npm run dev
+    ```
+-   **Production Mode**:
+    ```bash
+    npm run start
+    ```
 
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/auth/logout`
-    - **Description**: Logs out the user and clears the refresh token from cookies.
+---
 
-9. **Refresh access token**
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/auth/refresh-token`
-    - **Description**: Generates a new access token using the refresh token.
+## 🤝 **Contributing**
 
-## **User Endpoints**
+Contributions are welcome! If you have ideas to improve this project, feel free to fork the repository and submit a pull request.
 
-1. **Get user profile**
+1. Fork the repository.
+2. Create a feature branch:
+    ```bash
+    git checkout -b feature-name
+    ```
+3. Commit your changes:
+    ```bash
+    git commit -m "Description of changes"
+    ```
+4. Push to the branch:
+    ```bash
+    git push origin feature-name
+    ```
+5. Open a pull request.
 
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/users/profile`
-    - **Description**: Returns the profile information of the authenticated user.
+---
 
-2. **Get user by ID**
+## 📝 **License**
 
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/users/:id`
-    - **Description**: Returns a user’s details by their ID.
+This project is licensed under the [MIT License](./LICENSE).
 
-3. **Change password**
+---
 
-    - **HTTP Method**: `POST`
-    - **Endpoint**: `/users/change-password`
-    - **Description**: Allows an authenticated user to change their password.
+## ❤️ **Acknowledgments**
 
-4. **Update profile**
-
-    - **HTTP Method**: `POST`
-    - **Endpoint**: `/users/update-profile`
-    - **Description**: Allows an authenticated user to update their profile details.
-
-5. **Update profile picture**
-
-    - **HTTP Method**: `POST`
-    - **Endpoint**: `/users/update-avatar`
-    - **Description**: Allows an authenticated user to update their profile picture.
-
-6. **Update email address**
-
-    - **HTTP Method**: `POST`
-    - **Endpoint**: `/users/update-email`
-    - **Description**: Allows an authenticated user to update their email address.
-
-7. **Delete user account**
-
-    - **HTTP Method**: `POST`
-    - **Endpoint**: `/users/delete`
-    - **Description**: Allows an authenticated user to delete their account.
-
-8. **Add scholarship to favorites**
-
-    - **HTTP Method**: `POST`
-    - **Endpoint**: `/users/add-favorite`
-    - **Description**: Adds a scholarship to the user's favorites list.
-
-9. **Get favorite scholarships**
-
-    - **HTTP Method**: `GET`
-    - **Endpoint**: `/users/favorites`
-    - **Description**: Returns the authenticated user’s list of favorite scholarships.
-
-10. **Remove scholarship from favorites**
-    - **HTTP Method**: `POST`
-    - **Endpoint**: `/users/remove-favorite`
-    - **Description**: Removes a scholarship from the user's favorites list.
+Made with ❤️ by the Oasis Team
